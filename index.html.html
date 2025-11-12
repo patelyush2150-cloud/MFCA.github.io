@@ -1,0 +1,1259 @@
+6
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathematical Foundation Homepage</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.0.0/math.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            text-align: center;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #333 0%, #666 50%, #333 100%);
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            display: inline-block;
+            width: auto;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        body.dark-mode {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #ecf0f1;
+        }
+        body.dark-mode .glass {
+            background: rgba(44, 62, 80, 0.1);
+            border: 1px solid rgba(236, 240, 241, 0.2);
+        }
+        body.dark-mode .content {
+            background: rgba(52, 73, 94, 0.9);
+            color: #ecf0f1;
+        }
+        body.dark-mode .example {
+            background: #34495e;
+            border-left-color: #3498db;
+        }
+        body.dark-mode .option {
+            background: rgba(52, 73, 94, 0.8);
+        }
+        body.dark-mode .option:hover {
+            background: rgba(52, 73, 94, 1);
+        }
+        .particle {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(255,255,255,0.1);
+            animation: float 10s infinite linear;
+            pointer-events: none;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        .hamburger {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 1001;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 220px;
+            height: 100vh;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(12px);
+            padding: 25px 20px 20px 20px;
+            box-sizing: border-box;
+            z-index: 1000;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255,255,255,0.15);
+            transition: transform 0.3s ease;
+            transform: translateX(-220px);
+        }
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            margin: 8px 0;
+            padding: 14px 18px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1rem;
+            gap: 12px;
+        }
+        .sidebar a:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateX(8px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+        }
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: #3498db;
+            z-index: 1001;
+        }
+        .venn-diagram {
+            width: 400px;
+            height: 300px;
+            margin: 20px auto;
+            position: relative;
+        }
+        .venn-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid #007bff;
+            background: rgba(0,123,255,0.2);
+            transition: all 0.3s;
+        }
+        .venn-a { width: 150px; height: 150px; left: 50px; top: 75px; }
+        .venn-b { width: 150px; height: 150px; left: 200px; top: 75px; }
+        .venn-intersect { background: rgba(0,123,255,0.4); }
+        .toolbox {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .draggable {
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: grab;
+        }
+        .drop-zone {
+            min-height: 50px;
+            border: 2px dashed #007bff;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            iframe { width: 100%; height: auto; }
+            .sidebar { width: 150px; }
+        }
+        .liquid-btn {
+            position: relative;
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .liquid-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        .liquid-btn:hover::before {
+            left: 100%;
+        }
+        .liquid-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            pointer-events: none;
+            animation: bubble 1s ease-out forwards;
+        }
+        @keyframes bubble {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0;
+                top: -50px;
+            }
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .content {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .result {
+            background: #f0f8ff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .quiz {
+            margin-top: 20px;
+        }
+        .option {
+            background: rgba(255,255,255,0.8);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .option:hover {
+            background: rgba(255,255,255,1);
+        }
+        .correct {
+            background: #d4edda !important;
+        }
+        .wrong {
+            background: #f8d7da !important;
+        }
+        .example {
+            background: #e9ecef;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .example b {
+            color: #007bff;
+        }
+        /* BODMAS styles */
+        .bodmas-container {
+            background: rgba(255,255,255,0.27);
+            backdrop-filter: blur(12px);
+            border-radius: 30px;
+            border: 2px solid rgba(255,255,255,0.29);
+            box-shadow: 0 2px 40px rgba(0,0,0,0.12);
+            padding: 36px 26px;
+            max-width: 520px;
+            width: 100%;
+            margin: 20px auto;
+            text-align: center;
+            color: #123;
+        }
+        .bodmas-container h2 { margin: 6px 0 14px; color: #123; }
+        .bodmas-container .quiz {
+            background: rgba(255,255,255,0.65);
+            border-radius: 12px;
+            padding: 18px;
+            margin: 10px auto 14px;
+            max-width: 420px;
+            color: #234;
+            border: 1px solid #eee;
+        }
+        .bodmas-container #expression {
+            width: 100%;
+            padding: 9px;
+            border-radius: 8px;
+            border: 1px solid #cfd8dc;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        .bodmas-container #result {
+            width: 150px;
+            padding: 9px 10px;
+            border-radius: 8px;
+            border: 1px solid #cfd8dc;
+            font-size: 1rem;
+            text-align: center;
+            background: #f9f9f9;
+        }
+        .bodmas-container .controls { margin-top: 10px; }
+        .bodmas-container .btn {
+            background: #44c1be;
+            color: #fff;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.98rem;
+            padding: 10px 18px;
+            margin: 6px 4px 0px 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.11);
+            cursor: pointer;
+            transition: background 0.18s;
+        }
+        .bodmas-container .btn:hover { background: #2aa39b; }
+        .bodmas-container #feedback { margin-top: 10px; min-height: 20px; }
+        .bodmas-container .correct { color: #129307; }
+        .bodmas-container .wrong { color: #d10034; }
+        .bodmas-container .meta { margin-top: 12px; font-size: 0.95rem; color: #244; }
+        .bodmas-container .small { font-size: 0.88rem; color:#345; margin-top:8px; }
+        /* MCQ Quiz styles */
+        :root{--card:#ffffffdd;--bg1:#a8edea;--bg2:#fed6e3;--accent:#2193b0}
+        .mcq-wrap{max-width:980px;margin:28px auto;padding:20px;background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+        .mcq-wrap header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+        .mcq-wrap h1{margin:0;font-size:1.6rem}
+        .mcq-wrap #controls-top{display:flex;gap:8px}
+        .mcq-wrap button.btn{background:linear-gradient(45deg,#6dd5ed,#2193b0);color:#fff;border:0;padding:10px 14px;border-radius:999px;cursor:pointer;font-size:1rem}
+        .mcq-wrap button.btn.secondary{background:rgba(0,0,0,.06);color:#222}
+        .mcq-wrap main{margin-top:18px}
+        .mcq-wrap #question-card{padding:18px;border-radius:12px;background:#fff;min-height:160px}
+        .mcq-wrap #qtext{font-size:1.25rem;font-weight:600;margin:0 0 12px}
+        .mcq-wrap #options{display:block}
+        .mcq-wrap label.option{display:block;padding:10px;border-radius:10px;margin:8px 0;cursor:pointer;background:rgba(0,0,0,.03);font-size:1.06rem}
+        .mcq-wrap input[type="radio"]{margin-right:12px}
+        .mcq-wrap .row{display:flex;align-items:center;gap:10px;margin-top:12px}
+        .mcq-wrap .spacer{flex:1}
+        .mcq-wrap #feedback{min-height:1.3em;font-weight:700;font-size:1.02rem;margin-left:6px;color:#222}
+        .mcq-wrap #results{margin-top:14px;padding:12px;border-radius:10px;background:rgba(0,0,0,.03);max-height:420px;overflow:auto}
+        .mcq-wrap .muted{color:#666;font-size:.95rem}
+        @media (max-width:600px){.mcq-wrap h1{font-size:1.2rem}.mcq-wrap #qtext{font-size:1.03rem}}
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            margin-top: 40px;
+        }
+        footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="sidebar" id="sidebar">
+        <a href="#" class="home-link"><i class="fas fa-home"></i> Home</a>
+        <a href="#unit1"><i class="fas fa-shapes"></i> Unit 1: Set Theory</a>
+        <a href="#bodmas"><i class="fas fa-calculator"></i> BODMAS Calculator</a>
+        <a href="#unit2"><i class="fas fa-link"></i> Unit 2: Relations & Functions</a>
+        <a href="#unit3"><i class="fas fa-table"></i> Matrices & Determinants</a>
+        <a href="#unit4"><i class="fas fa-infinity"></i> Limits & Differentiation</a>
+    </div>
+    <button class="hamburger" id="hamburger">☰</button>
+    <button id="darkModeToggle" class="liquid-btn" style="position: fixed; top: 10px; right: 10px; z-index: 1002;">🌙 Dark Mode</button>
+    <div class="container">
+        <h1><i class="fas fa-calculator"></i> Mathematical Foundation Homepage</h1>
+        <h2><i class="fas fa-shapes"></i> Units 1, 2, 3: Set Theory, Relations and Functions, Matrices and Limits</h2>
+
+    <div class="glass section" id="unit1">
+        <h2><i class="fas fa-shapes"></i> Unit 1: Set Theory</h2>
+        <div class="content">
+            <h3><i class="fas fa-list"></i> 1. Definition and Types of Sets</h3>
+            <p>A set is a well-defined collection of distinct objects, called elements or members. Sets are the fundamental building blocks in mathematics, providing a way to group objects that share common properties. The concept was formalized by Georg Cantor in the late 19th century.</p>
+            <p><b>Key Characteristics:</b></p>
+            <ul>
+                <li>Elements are distinct (no duplicates)</li>
+                <li>Order doesn't matter</li>
+                <li>Sets can contain any type of objects (numbers, letters, other sets, etc.)</li>
+                <li>Sets are defined by their elements, not by description alone</li>
+            </ul>
+            <p><b>Types of Sets:</b></p>
+            <ul>
+                <li><b>Finite Set:</b> Has a limited number of elements. Cardinality is a non-negative integer.</li>
+                <li><b>Infinite Set:</b> Has unlimited elements. Can be countably infinite (ℵ₀) or uncountably infinite (like continuum ℵ₁).</li>
+                <li><b>Empty Set (∅):</b> Contains no elements. Unique and subset of every set.</li>
+                <li><b>Singleton Set:</b> Contains exactly one element, e.g., {π}.</li>
+                <li><b>Universal Set (U):</b> Contains all possible elements in the given context.</li>
+                <li><b>Subset:</b> A set A is a subset of B (A ⊆ B) if every element of A is also in B.</li>
+                <li><b>Proper Subset:</b> A ⊂ B means A ⊆ B and A ≠ B.</li>
+                <li><b>Power Set:</b> Set of all subsets of a set, denoted P(A).</li>
+            </ul>
+            <p><b>Cardinality:</b> The number of elements in a set. For finite sets, it's straightforward. For infinite sets, it involves bijections.</p>
+            <div class="example">
+                <b>Example 1:</b> Finite set A = {1, 2, 3}<br>
+                <b>Cardinality:</b> 3<br>
+                <b>Subsets:</b> ∅, {1}, {2}, {3}, {1,2}, {1,3}, {2,3}, {1,2,3} (8 total)
+            </div>
+            <div class="example">
+                <b>Example 2:</b> Empty set ∅ = {}<br>
+                <b>Cardinality:</b> 0<br>
+                <b>Power set:</b> {∅}
+            </div>
+            <div class="example">
+                <b>Example 3:</b> Natural numbers ℕ = {0, 1, 2, 3, ...}<br>
+                <b>Type:</b> Countably infinite<br>
+                <b>Cardinality:</b> ℵ₀
+            </div>
+            <div class="example">
+                <b>Example 4:</b> Real numbers ℝ<br>
+                <b>Type:</b> Uncountably infinite<br>
+                <b>Cardinality:</b> 2^ℵ₀
+            </div>
+            <div class="example">
+                <b>Example 5:</b> Singleton {42}<br>
+                <b>Cardinality:</b> 1<br>
+                <b>Power set:</b> {∅, {42}}
+            </div>
+
+            <h3><i class="fas fa-cogs"></i> 2. Set Operations</h3>
+            <p>Set operations allow us to combine or compare sets. These operations follow algebraic properties similar to arithmetic operations.</p>
+            <p><b>Basic Operations:</b></p>
+            <ul>
+                <li><b>Union (A ∪ B):</b> Set of all elements in A or B or both.</li>
+                <li><b>Intersection (A ∩ B):</b> Set of elements common to both A and B.</li>
+                <li><b>Difference (A - B or A \ B):</b> Elements in A but not in B.</li>
+                <li><b>Complement (A'):</b> Elements in universal set U but not in A.</li>
+                <li><b>Symmetric Difference (A Δ B):</b> (A - B) ∪ (B - A), elements in exactly one set.</li>
+            </ul>
+            <p><b>Properties of Set Operations:</b></p>
+            <ul>
+                <li><b>Commutative:</b> A ∪ B = B ∪ A, A ∩ B = B ∩ A</li>
+                <li><b>Associative:</b> (A ∪ B) ∪ C = A ∪ (B ∪ C)</li>
+                <li><b>Distributive:</b> A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)</li>
+                <li><b>Identity:</b> A ∪ ∅ = A, A ∩ U = A</li>
+                <li><b>Complement Laws:</b> A ∪ A' = U, A ∩ A' = ∅</li>
+                <li><b>De Morgan's Laws:</b> (A ∪ B)' = A' ∩ B', (A ∩ B)' = A' ∪ B'</li>
+            </ul>
+            <p><b>Disjoint Sets:</b> Sets with no common elements (A ∩ B = ∅).</p>
+            <p><b>Partition:</b> A collection of non-empty subsets that are pairwise disjoint and cover the original set.</p>
+            <div class="example">
+                <b>Example 1:</b> A = {1,2,3}, B = {2,3,4}<br>
+                <b>A ∪ B:</b> {1,2,3,4}<br>
+                <b>A ∩ B:</b> {2,3}<br>
+                <b>A - B:</b> {1}<br>
+                <b>B - A:</b> {4}<br>
+                <b>A Δ B:</b> {1,4}
+            </div>
+            <div class="example">
+                <b>Example 2:</b> A = {a,b,c}, B = {d,e}<br>
+                <b>Disjoint:</b> A ∩ B = ∅<br>
+                <b>Union:</b> {a,b,c,d,e}
+            </div>
+            <div class="example">
+                <b>Example 3:</b> U = {1,2,3,4,5}, A = {1,2}<br>
+                <b>A':</b> {3,4,5}<br>
+                <b>De Morgan:</b> (A ∪ {3})' = A' ∩ {3}' = {3,4,5} ∩ {1,2,4,5} = {4,5}
+            </div>
+            <div class="example">
+                <b>Example 4:</b> Subset check: {1,2} ⊆ {1,2,3,4}<br>
+                <b>True:</b> Every element of first set is in second.
+            </div>
+            <div class="example">
+                <b>Example 5:</b> Power set of {1,2}: P({1,2}) = {∅, {1}, {2}, {1,2}}<br>
+                <b>Cardinality:</b> 2² = 4
+            </div>
+
+            <h4>Interactive Set Calculator</h4>
+            <input type="text" id="setA_op" placeholder="Enter set A, e.g., {1,2,3}">
+            <input type="text" id="setB_op" placeholder="Enter set B, e.g., {2,3,4}">
+            <button class="liquid-btn" onclick="unionSets()">Union</button>
+            <button class="liquid-btn" onclick="intersectSets()">Intersection</button>
+            <button class="liquid-btn" onclick="differenceSets()">Difference (A - B)</button>
+            <div class="result" id="setOpResult"></div>
+        </div>
+
+            <div class="content">
+                <h3>YouTube Video: Exploring Set Theory</h3>
+                <p>Dive into the fascinating world of sets with this captivating video that breaks down complex concepts into bite-sized, understandable pieces.</p>
+                <p>Discover how sets form the foundation of mathematics and unlock the secrets of logical thinking.</p>
+                <p>Watch as everyday examples come alive, making abstract ideas tangible and exciting.</p>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/_Sezw1Wosis" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <div class="glass section" id="bodmas">
+            <h2><i class="fas fa-calculator"></i> BODMAS Calculator</h2>
+            <div class="bodmas-container">
+                <div class="quiz" id="bodmasQuiz">
+                    <input type="text" id="expression" placeholder="Enter math expression, e.g., (2+3)*4" />
+                    <input type="text" id="result" placeholder="Result" readonly />
+                    <div class="controls">
+                        <button class="btn" id="calculateBtn">Calculate</button>
+                    </div>
+                    <div id="feedback"></div>
+                </div>
+                <div class="meta">
+                    <div class="small"><strong>BODMAS:</strong> Brackets, Orders (powers), Division/Multiplication, Addition/Subtraction. Use ^ for powers.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass section" id="unit2">
+            <h2><i class="fas fa-link"></i> Unit 2: Relations and Functions</h2>
+            <div class="content">
+                <h3><i class="fas fa-times"></i> 1. Cartesian Product of Sets</h3>
+                <p>If we have two sets A and B, then Cartesian Product (A × B) is the set of all ordered pairs (a, b) where a ∈ A and b ∈ B.</p>
+                <p>Example: A = {1, 2}, B = {x, y} → A × B = {(1, x), (1, y), (2, x), (2, y)}</p>
+                <p>Number of elements in A × B = (Number of elements in A) × (Number of elements in B)</p>
+                <div class="example">
+                    <b>Example 1:</b> A = {a, b}, B = {1, 2}<br>
+                    <b>Step 1:</b> Take each element from A.<br>
+                    <b>Step 2:</b> Pair with each element from B.<br>
+                    <b>Result:</b> A × B = {(a,1), (a,2), (b,1), (b,2)}
+                </div>
+                <div class="example">
+                    <b>Example 2:</b> A = {1}, B = {2,3,4}<br>
+                    <b>Step 1:</b> Only one element in A: 1<br>
+                    <b>Step 2:</b> Pair 1 with 2,3,4<br>
+                    <b>Result:</b> A × B = {(1,2), (1,3), (1,4)}
+                </div>
+                <div class="example">
+                    <b>Example 3:</b> A = ∅, B = {x}<br>
+                    <b>Step 1:</b> A is empty set<br>
+                    <b>Result:</b> A × B = ∅
+                </div>
+                <div class="example">
+                    <b>Example 4:</b> A = {p,q}, B = {p,q}<br>
+                    <b>Step 1:</b> Pair each from A with each from B<br>
+                    <b>Result:</b> A × B = {(p,p), (p,q), (q,p), (q,q)}
+                </div>
+                <div class="example">
+                    <b>Example 5:</b> A = {0,1}, B = {0}<br>
+                    <b>Step 1:</b> Pair 0 and 1 with 0<br>
+                    <b>Result:</b> A × B = {(0,0), (1,0)}
+                </div>
+
+                <h4>Interactive Calculator</h4>
+                <input type="text" id="setA" placeholder="Enter set A, e.g., {1,2,3}">
+                <input type="text" id="setB" placeholder="Enter set B, e.g., {a,b}">
+                <button class="liquid-btn" onclick="calculateCartesian()">Calculate Cartesian Product</button>
+                <div class="result" id="cartesianResult"></div>
+            </div>
+
+            <div class="content">
+                <h3><i class="fas fa-project-diagram"></i> 2. Relation</h3>
+                <p>A relation R from set A to set B is any subset of A × B.</p>
+                <p>Example: A = {1, 2, 3}, B = {4, 5, 6}, R = {(1,4), (2,5), (3,6)}</p>
+                <div class="example">
+                    <b>Example 1:</b> A = {1,2}, R = {(1,1), (2,2)}<br>
+                    <b>Check Reflexive:</b> (1,1) and (2,2) present → <b>Reflexive</b><br>
+                    <b>Identity relation</b>
+                </div>
+                <div class="example">
+                    <b>Example 2:</b> A = {1,2,3}, R = {(1,2), (2,3)}<br>
+                    <b>Check Reflexive:</b> (3,3) missing → <b>Not reflexive</b>
+                </div>
+                <div class="example">
+                    <b>Example 3:</b> A = {1,2}, R = {(1,2), (2,1), (1,1), (2,2)}<br>
+                    <b>Reflexive:</b> Yes<br>
+                    <b>Symmetric:</b> (1,2) and (2,1) present → <b>Symmetric</b>
+                </div>
+                <div class="example">
+                    <b>Example 4:</b> A = {1,2,3}, R = {(1,1), (1,2), (2,1), (2,2), (3,3)}<br>
+                    <b>Reflexive, Symmetric, Transitive:</b> Yes → <b>Equivalence relation</b>
+                </div>
+                <div class="example">
+                    <b>Example 5:</b> A = {1,2}, R = {(1,2)}<br>
+                    <b>Reflexive:</b> No<br>
+                    <b>Symmetric:</b> (2,1) missing → No<br>
+                    <b>Transitive:</b> N/A → <b>None</b>
+                </div>
+
+                <h4>Check Relation Properties</h4>
+                <textarea id="relationInput" placeholder="Enter relation as pairs, e.g., {(1,1),(2,2),(3,3)}"></textarea>
+                <button class="liquid-btn" onclick="checkReflexive()">Check Reflexive</button>
+                <button class="liquid-btn" onclick="checkSymmetric()">Check Symmetric</button>
+                <button class="liquid-btn" onclick="checkTransitive()">Check Transitive</button>
+                <div class="result" id="relationResult"></div>
+            </div>
+
+            <div class="content">
+                <h3><i class="fas fa-function"></i> 3. Function</h3>
+                <p>A function is a special type of relation where each element in A maps to only one in B.</p>
+                <p>Example: f = {(1,4), (2,5), (3,6)}</p>
+                <div class="example">
+                    <b>Example 1:</b> f(x) = x + 1<br>
+                    <b>Domain:</b> R<br>
+                    <b>Range:</b> R<br>
+                    <b>Type:</b> Bijective
+                </div>
+                <div class="example">
+                    <b>Example 2:</b> f(x) = x²<br>
+                    <b>Domain:</b> R<br>
+                    <b>Range:</b> [0,∞)<br>
+                    <b>Injective:</b> No (f(2)=4, f(-2)=4)<br>
+                    <b>Surjective:</b> Yes
+                </div>
+                <div class="example">
+                    <b>Example 3:</b> f(x) = 2x<br>
+                    <b>Domain:</b> R<br>
+                    <b>Range:</b> R<br>
+                    <b>Type:</b> Bijective
+                </div>
+                <div class="example">
+                    <b>Example 4:</b> f(x) = sin(x)<br>
+                    <b>Domain:</b> R<br>
+                    <b>Range:</b> [-1,1]<br>
+                    <b>Injective:</b> No<br>
+                    <b>Surjective:</b> Yes
+                </div>
+                <div class="example">
+                    <b>Example 5:</b> f(x) = x³<br>
+                    <b>Domain:</b> R<br>
+                    <b>Range:</b> R<br>
+                    <b>Type:</b> Bijective
+                </div>
+
+                <h3>MCQ Quiz: Sets, Relations & Functions</h3>
+                <div class="mcq-wrap" role="main">
+                    <header>
+                        <h1>MCQ Quiz</h1>
+                        <div id="controls-top">
+                            <button class="btn secondary" id="prev">Prev</button>
+                            <button class="btn secondary" id="next">Next</button>
+                        </div>
+                    </header>
+
+                    <main>
+                        <div id="question-card" aria-live="polite">
+                            <div id="qtext">Loading questions…</div>
+                            <div id="options" role="radiogroup"></div>
+
+                            <div class="row">
+                                <div>
+                                    <button class="btn" id="submit-answer" disabled>Submit Answer</button>
+                                    <button class="btn" id="finish">Finish & Review</button>
+                                </div>
+                                <div class="spacer"></div>
+                                <div id="feedback" aria-live="polite"></div>
+                            </div>
+                        </div>
+
+                        <div id="results" hidden></div>
+                    </main>
+                </div>
+            </div>
+
+            <div class="content">
+                <h3>YouTube Video</h3>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/7B_--L_62S8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <div class="glass section" id="unit3">
+            <h2><i class="fas fa-table"></i> Chapter 3: Matrices and Determinants</h2>
+            <div class="content">
+                <h3><i class="fas fa-th"></i> 1. Matrix Definition</h3>
+                <p>A matrix is a rectangular array of numbers, symbols, or expressions arranged in rows and columns. Matrices are fundamental in linear algebra and have applications in physics, computer graphics, economics, and more.</p>
+                <p><b>Notation:</b> A matrix with m rows and n columns is called an m×n matrix. Elements are denoted aᵢⱼ where i is row, j is column.</p>
+                <p><b>Types of Matrices:</b></p>
+                <ul>
+                    <li><b>Row Matrix:</b> Single row, e.g., [1, 2, 3]</li>
+                    <li><b>Column Matrix:</b> Single column, e.g., [[1],[2],[3]]</li>
+                    <li><b>Square Matrix:</b> Equal rows and columns (m = n)</li>
+                    <li><b>Diagonal Matrix:</b> Non-zero elements only on main diagonal</li>
+                    <li><b>Identity Matrix:</b> Diagonal matrix with 1s on diagonal</li>
+                    <li><b>Zero Matrix:</b> All elements are zero</li>
+                    <li><b>Upper Triangular:</b> All elements below diagonal are zero</li>
+                    <li><b>Lower Triangular:</b> All elements above diagonal are zero</li>
+                </ul>
+                <div class="example">
+                    <b>Example 1:</b> Row Matrix: [1, 2, 3]<br>
+                    <b>Size:</b> 1×3
+                </div>
+                <div class="example">
+                    <b>Example 2:</b> Column Matrix: [[4],[5]]<br>
+                    <b>Size:</b> 2×1
+                </div>
+                <div class="example">
+                    <b>Example 3:</b> Square Matrix: [[1,2],[3,4]]<br>
+                    <b>Size:</b> 2×2
+                </div>
+                <div class="example">
+                    <b>Example 4:</b> Diagonal Matrix: [[1,0],[0,2]]<br>
+                    <b>Determinant:</b> 1×2 = 2
+                </div>
+                <div class="example">
+                    <b>Example 5:</b> Identity Matrix I₂: [[1,0],[0,1]]<br>
+                    <b>Property:</b> A × I = A
+                </div>
+
+                <h3><i class="fas fa-plus"></i> 2. Matrix Operations</h3>
+                <p>Basic operations on matrices include addition, subtraction, scalar multiplication, and matrix multiplication.</p>
+                <p><b>Addition/Subtraction:</b> Performed element-wise on matrices of the same size.</p>
+                <p><b>Scalar Multiplication:</b> Multiply each element by a scalar.</p>
+                <p><b>Matrix Multiplication:</b> Row by column multiplication. Requires compatible dimensions.</p>
+                <div class="example">
+                    <b>Example 1:</b> A = [[1,2],[3,4]], B = [[5,6],[7,8]]<br>
+                    <b>A + B:</b> [[6,8],[10,12]]<br>
+                    <b>A × B:</b> [[19,22],[43,50]]
+                </div>
+                <div class="example">
+                    <b>Example 2:</b> Scalar: 2 × [[1,2],[3,4]] = [[2,4],[6,8]]
+                </div>
+                <div class="example">
+                    <b>Example 3:</b> A (2×3), B (3×2) → AB (2×2)
+                </div>
+
+                <h4>Interactive Matrix Calculator</h4>
+                <input type="text" id="matrixA" placeholder="Matrix A, e.g., [[1,2],[3,4]]">
+                <input type="text" id="matrixB" placeholder="Matrix B or scalar">
+                <button class="liquid-btn" onclick="addMatrices()">Add</button>
+                <button class="liquid-btn" onclick="multiplyMatrices()">Multiply</button>
+                <button class="liquid-btn" onclick="scalarMultiply()">Scalar Multiply</button>
+                <div class="result" id="matrixResult"></div>
+
+                <h3><i class="fas fa-calculator"></i> 3. Determinants</h3>
+                <p>The determinant is a scalar value that can be computed from the elements of a square matrix. It has applications in solving systems of linear equations and finding inverses.</p>
+                <p><b>2×2 Determinant:</b> det([[a,b],[c,d]]) = ad - bc</p>
+                <p><b>3×3 Determinant:</b> Use cofactor expansion or rule of Sarrus.</p>
+                <div class="example">
+                    <b>Example 1:</b> det([[1,2],[3,4]]) = 1×4 - 2×3 = -2
+                </div>
+                <div class="example">
+                    <b>Example 2:</b> det([[1,2,3],[4,5,6],[7,8,9]]) = 0 (singular)
+                </div>
+
+                <h4>Determinant Calculator</h4>
+                <input type="text" id="detMatrix" placeholder="Square matrix, e.g., [[1,2],[3,4]]">
+                <button class="liquid-btn" onclick="calculateDeterminant()">Calculate Determinant</button>
+                <div class="result" id="detResult"></div>
+            </div>
+        </div>
+
+        <div class="glass section" id="unit4">
+            <h2><i class="fas fa-infinity"></i> Unit 4: Limits & Differentiation</h2>
+            <div class="content">
+                <h3><i class="fas fa-arrow-right"></i> 1. Limits</h3>
+                <p>The limit of a function f(x) as x approaches a is L if f(x) gets arbitrarily close to L as x gets close to a.</p>
+                <p><b>Formal Definition:</b> ∀ε > 0, ∃δ > 0 such that |f(x) - L| < ε whenever 0 < |x - a| < δ.</p>
+                <p><b>Properties:</b> Limits of sums, products, quotients, etc.</p>
+                <div class="example">
+                    <b>Example 1:</b> lim (x→2) (x² - 4)/(x - 2) = lim (x→2) (x + 2) = 4
+                </div>
+                <div class="example">
+                    <b>Example 2:</b> lim (x→0) sin(x)/x = 1
+                </div>
+                <div class="example">
+                    <b>Example 3:</b> lim (x→∞) 1/x = 0
+                </div>
+
+                <h4>Limit Calculator</h4>
+                <input type="text" id="limitExpr" placeholder="Expression, e.g., (x^2 - 4)/(x - 2)">
+                <input type="text" id="limitPoint" placeholder="Approach point, e.g., 2">
+                <button class="liquid-btn" onclick="calculateLimit()">Calculate Limit</button>
+                <div class="result" id="limitResult"></div>
+            </div>
+
+            <div class="content">
+                <h3><i class="fas fa-chart-line"></i> 2. Differentiation</h3>
+                <p>Differentiation is the process of finding the derivative of a function, which represents the rate of change.</p>
+                <p><b>Definition:</b> f'(x) = lim (h→0) [f(x+h) - f(x)] / h</p>
+                <p><b>Basic Rules:</b></p>
+                <ul>
+                    <li>Constant: d/dx(c) = 0</li>
+                    <li>Power: d/dx(x^n) = n x^{n-1}</li>
+                    <li>Sum: d/dx(f+g) = f' + g'</li>
+                    <li>Product: d/dx(fg) = f'g + fg'</li>
+                    <li>Quotient: d/dx(f/g) = (f'g - fg') / g²</li>
+                    <li>Chain: d/dx(f(g(x))) = f'(g(x)) g'(x)</li>
+                </ul>
+                <div class="example">
+                    <b>Example 1:</b> d/dx(x²) = 2x
+                </div>
+                <div class="example">
+                    <b>Example 2:</b> d/dx(sin(x)) = cos(x)
+                </div>
+                <div class="example">
+                    <b>Example 3:</b> d/dx(e^x) = e^x
+                </div>
+                <h4>Derivative Calculator</h4>
+                <input type="text" id="derivExpr" placeholder="Expression, e.g., x^2 + 3*x">
+                <button class="liquid-btn" onclick="calculateDerivative()">Calculate Derivative</button>
+                <div class="result" id="derivResult"></div>
+            </div>
+            <div class="content">
+                <h3>YouTube Video: Limits & Differentiation</h3>
+                <p>This video provides an in-depth exploration of limits and differentiation, key concepts in calculus.</p>
+                <p>It explains how limits form the foundation for understanding derivatives and rates of change.</p>
+                <p>With clear examples and visualizations, it helps build intuition for advanced mathematical analysis.</p>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/CHWhaAlo_ms" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Mathematical Foundation. All rights reserved.</p>
+        </p>Provide by:</p>
+        </p><strong>Devarsh Hadiyal - Abhishik Sisodiya - Sarthik Vekariya</strong> </p> 
+        </p>Submitted To :<strong> Prof. Keyuri Shah</strong></p>
+        <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+    </footer>
+
+    <script>
+        // Dark Mode Toggle
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        // Hamburger Menu Toggle
+        document.getElementById('hamburger').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+            sidebar.classList.toggle('closed');
+        });
+
+        // Progress Bar
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.body.offsetHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.getElementById('progressBar').style.width = scrollPercent + '%';
+        });
+
+        // Fade In Animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Set Operations
+        function unionSets() {
+            const setA = document.getElementById('setA_op').value;
+            const setB = document.getElementById('setB_op').value;
+            try {
+                const a = setA.match(/\{([^}]+)\}/)[1].split(',').map(x => x.trim());
+                const b = setB.match(/\{([^}]+)\}/)[1].split(',').map(x => x.trim());
+                const union = [...new Set([...a, ...b])];
+                document.getElementById('setOpResult').innerText = 'Union: {' + union.join(', ') + '}';
+            } catch (e) {
+                document.getElementById('setOpResult').innerText = 'Error: Invalid format';
+            }
+        }
+
+        function intersectSets() {
+            const setA = document.getElementById('setA_op').value;
+            const setB = document.getElementById('setB_op').value;
+            try {
+                const a = new Set(setA.match(/\{([^}]+)\}/)[1].split(',').map(x => x.trim()));
+                const b = new Set(setB.match(/\{([^}]+)\}/)[1].split(',').map(x => x.trim()));
+                const intersect = [...a].filter(x => b.has(x));
+                document.getElementById('setOpResult').innerText = 'Intersection: {' + intersect.join(', ') + '}';
+            } catch (e) {
+                document.getElementById('setOpResult').innerText = 'Error: Invalid format';
+            }
+        }
+
+        function differenceSets() {
+            const setA = document.getElementById('setA_op').value;
+            const setB = document.getElementById('setB_op').value;
+            try {
+                const a = new Set(setA.match(/\{([^}]+)\}/)[1].split(',').map(x => x.trim()));
+                const b = new Set(setB.match(/\{([^}]+)\}/)[1].split(',').map(x => x.trim()));
+                const diff = [...a].filter(x => !b.has(x));
+                document.getElementById('setOpResult').innerText = 'Difference (A - B): {' + diff.join(', ') + '}';
+            } catch (e) {
+                document.getElementById('setOpResult').innerText = 'Error: Invalid format';
+            }
+        }
+
+        // Cartesian Product
+        function calculateCartesian() {
+            const setA = document.getElementById('setA').value;
+            const setB = document.getElementById('setB').value;
+            try {
+                const a = setA.match(/\{([^}]+)\}/)[1].split(',').map(x => x.trim());
+                const b = setB.match(/\{([^}]+)\}/)[1].split(',').map(x => x.trim());
+                const cart = [];
+                for (let x of a) {
+                    for (let y of b) {
+                        cart.push(`(${x}, ${y})`);
+                    }
+                }
+                document.getElementById('cartesianResult').innerText = 'Cartesian Product: {' + cart.join(', ') + '}';
+            } catch (e) {
+                document.getElementById('cartesianResult').innerText = 'Error: Invalid format';
+            }
+        }
+
+        // Relation Properties
+        function checkReflexive() {
+            const input = document.getElementById('relationInput').value;
+            try {
+                const pairs = input.match(/\{([^}]+)\}/)[1].split('),(').map(p => p.replace(/[{}()]/g, '').split(',').map(x => x.trim()));
+                const set = [...new Set(pairs.flat())];
+                const reflexive = set.every(x => pairs.some(p => p[0] === x && p[1] === x));
+                document.getElementById('relationResult').innerText = 'Reflexive: ' + (reflexive ? 'Yes' : 'No');
+            } catch (e) {
+                document.getElementById('relationResult').innerText = 'Error: Invalid format';
+            }
+        }
+
+        function checkSymmetric() {
+            const input = document.getElementById('relationInput').value;
+            try {
+                const pairs = input.match(/\{([^}]+)\}/)[1].split('),(').map(p => p.replace(/[{}()]/g, '').split(',').map(x => x.trim()));
+                const symmetric = pairs.every(p => pairs.some(q => q[0] === p[1] && q[1] === p[0]));
+                document.getElementById('relationResult').innerText = 'Symmetric: ' + (symmetric ? 'Yes' : 'No');
+            } catch (e) {
+                document.getElementById('relationResult').innerText = 'Error: Invalid format';
+            }
+        }
+
+        function checkTransitive() {
+            const input = document.getElementById('relationInput').value;
+            try {
+                const pairs = input.match(/\{([^}]+)\}/)[1].split('),(').map(p => p.replace(/[{}()]/g, '').split(',').map(x => x.trim()));
+                const transitive = pairs.every(p => {
+                    const related = pairs.filter(q => q[0] === p[1]).map(q => q[1]);
+                    return related.every(r => pairs.some(s => s[0] === p[0] && s[1] === r));
+                });
+                document.getElementById('relationResult').innerText = 'Transitive: ' + (transitive ? 'Yes' : 'No');
+            } catch (e) {
+                document.getElementById('relationResult').innerText = 'Error: Invalid format';
+            }
+        }
+
+        // BODMAS Calculator
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const expr = document.getElementById('expression').value;
+            try {
+                const result = math.evaluate(expr);
+                document.getElementById('result').value = result;
+                document.getElementById('feedback').innerText = 'Calculated successfully!';
+                document.getElementById('feedback').style.color = 'green';
+            } catch (e) {
+                document.getElementById('feedback').innerText = 'Error: ' + e.message;
+                document.getElementById('feedback').style.color = 'red';
+            }
+        });
+
+        // Matrix Operations
+        function addMatrices() {
+            const a = document.getElementById('matrixA').value;
+            const b = document.getElementById('matrixB').value;
+            try {
+                const matA = math.matrix(JSON.parse(a));
+                const matB = math.matrix(JSON.parse(b));
+                const sum = math.add(matA, matB);
+                document.getElementById('matrixResult').innerText = 'Sum: ' + sum.toString();
+            } catch (e) {
+                document.getElementById('matrixResult').innerText = 'Error: ' + e.message;
+            }
+        }
+
+        function multiplyMatrices() {
+            const a = document.getElementById('matrixA').value;
+            const b = document.getElementById('matrixB').value;
+            try {
+                const matA = math.matrix(JSON.parse(a));
+                const matB = math.matrix(JSON.parse(b));
+                const prod = math.multiply(matA, matB);
+                document.getElementById('matrixResult').innerText = 'Product: ' + prod.toString();
+            } catch (e) {
+                document.getElementById('matrixResult').innerText = 'Error: ' + e.message;
+            }
+        }
+
+        function scalarMultiply() {
+            const a = document.getElementById('matrixA').value;
+            const s = parseFloat(document.getElementById('matrixB').value);
+            try {
+                const matA = math.matrix(JSON.parse(a));
+                const prod = math.multiply(s, matA);
+                document.getElementById('matrixResult').innerText = 'Scalar Product: ' + prod.toString();
+            } catch (e) {
+                document.getElementById('matrixResult').innerText = 'Error: ' + e.message;
+            }
+        }
+
+        function calculateDeterminant() {
+            const m = document.getElementById('detMatrix').value;
+            try {
+                const mat = math.matrix(JSON.parse(m));
+                const det = math.det(mat);
+                document.getElementById('detResult').innerText = 'Determinant: ' + det;
+            } catch (e) {
+                document.getElementById('detResult').innerText = 'Error: ' + e.message;
+            }
+        }
+
+        // Limit Calculator (simple approximation)
+        function calculateLimit() {
+            const expr = document.getElementById('limitExpr').value;
+            const point = parseFloat(document.getElementById('limitPoint').value);
+            try {
+                const f = math.compile(expr);
+                const h = 1e-10;
+                const left = f.evaluate({x: point - h});
+                const right = f.evaluate({x: point + h});
+                if (Math.abs(left - right) < 1e-5) {
+                    document.getElementById('limitResult').innerText = 'Limit: ' + left.toFixed(5);
+                } else {
+                    document.getElementById('limitResult').innerText = 'Limit does not exist or indeterminate';
+                }
+            } catch (e) {
+                document.getElementById('limitResult').innerText = 'Error: ' + e.message;
+            }
+        }
+
+        // Derivative Calculator
+        function calculateDerivative() {
+            const expr = document.getElementById('derivExpr').value;
+            try {
+                const deriv = math.derivative(expr, 'x');
+                document.getElementById('derivResult').innerText = 'Derivative: ' + deriv.toString();
+            } catch (e) {
+                document.getElementById('derivResult').innerText = 'Error: ' + e.message;
+            }
+        }
+
+        // MCQ Quiz from math_game.html
+        (function () {
+            const uniq = (a) => Array.from(new Set(a));
+            const fmtSet = (arr) => '{' + arr.join(',') + '}';
+            const escapeHtml = (s) => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'<','>':'>','"':'"'}[c]));
+
+            function generateQuestions(n = 300) {
+                const qs = [];
+                for (let k=1;k<=10 && qs.length<n;k++) {
+                    const setItems = Array.from({length:k}, (_,i)=>i+1);
+                    qs.push({
+                        id: qs.length+1,
+                        question: `What is the cardinality of the set ${fmtSet(setItems)}?`,
+                        options: [(k-1).toString(), k.toString(), (k+1).toString(), (k*2).toString()],
+                        answer: k.toString()
+                    });
+                }
+                const pairs = [
+                    [[1,2],[2,3]], [[1,2,3],[3,4,5]], [[2,4],[4,5]], [[1,3,5],[5,6]], [[0,1],[1,2]]
+                ];
+                for (const [A,B] of pairs) {
+                    if (qs.length>=n) break;
+                    const union = uniq([...A,...B]).sort((a,b)=>a-b);
+                    const inter = A.filter(x=>B.includes(x));
+                    const diff = A.filter(x=>!B.includes(x));
+                    qs.push({id:qs.length+1,question:`If A=${fmtSet(A)} and B=${fmtSet(B)}, what is A ∪ B?`,options:[fmtSet(A),fmtSet(B),fmtSet(union),"{}"],answer:fmtSet(union)});
+                    if (qs.length>=n) break;
+                    qs.push({id:qs.length+1,question:`If A=${fmtSet(A)} and B=${fmtSet(B)}, what is A ∩ B?`,options:[fmtSet(inter.length?inter:["{}"]),fmtSet(diff.length?diff:["{}"]), "{}", fmtSet(union)],answer:fmtSet(inter.length?inter:[""])});
+                    if (qs.length>=n) break;
+                    qs.push({id:qs.length+1,question:`If A=${fmtSet(A)} and B=${fmtSet(B)}, what is A \\ B?`,options:[fmtSet(diff.length?diff:["{}"]),fmtSet(inter.length?inter:["{}"]), "{}", fmtSet(union)],answer:fmtSet(diff.length?diff:[""])});
+                }
+
+                qs.push({id:qs.length+1,question:"If A={1,2,3}, how many subsets does A have?",options:["3","6","8","9"],answer:"8"});
+                qs.push({id:qs.length+1,question:"Is {1,2} a subset of {1,2,3}?",options:["Yes","No"],answer:"Yes"});
+                qs.push({id:qs.length+1,question:"Is {1,2,3} a proper subset of {1,2,3}?",options:["Yes","No"],answer:"No"});
+
+                const relations = [
+                    {set:[1,2,3], rel:[[1,1],[2,2],[3,3]], prop:{reflexive:true,symmetric:true,transitive:true}},
+                    {set:[1,2,3], rel:[[1,2],[2,1],[2,2]], prop:{reflexive:false,symmetric:true,transitive:false}},
+                    {set:[1,2], rel:[[1,2]], prop:{reflexive:false,symmetric:false,transitive:false}}
+                ];
+                for (const r of relations) {
+                    if (qs.length>=n) break;
+                    const relStr = '{' + r.rel.map(p=>`(${p[0]},${p[1]})`).join(',') + '}';
+                    qs.push({id:qs.length+1,question:`Consider R = ${relStr} on ${fmtSet(r.set)}. Is R reflexive?`,options:["Yes","No"],answer: r.prop.reflexive ? "Yes":"No"});
+                    if (qs.length>=n) break;
+                    qs.push({id:qs.length+1,question:`Consider R = ${relStr} on ${fmtSet(r.set)}. Is R symmetric?`,options:["Yes","No"],answer: r.prop.symmetric ? "Yes":"No"});
+                    if (qs.length>=n) break;
+                    qs.push({id:qs.length+1,question:`Consider R = ${relStr} on ${fmtSet(r.set)}. Is R transitive?`,options:["Yes","No"],answer: r.prop.transitive ? "Yes":"No"});
+                }
+
+                qs.push({id:qs.length+1,question:"Is f(x)=2x+3 (R→R) injective?",options:["Yes","No"],answer:"Yes"});
+                qs.push({id:qs.length+1,question:"Is f(x)=x^2 injective over all reals?",options:["Yes","No"],answer:"No"});
+                qs.push({id:qs.length+1,question:"Domain of f(x)=1/x (real)?",options:["All reals","All reals except 0","Positive reals","Non-negative reals"],answer:"All reals except 0"});
+                qs.push({id:qs.length+1,question:"Range of f(x)=x^2 (x real)?",options:["All reals","All positive reals","All non-negative reals","All negative reals"],answer:"All non-negative reals"});
+                qs.push({id:qs.length+1,question:"Inverse of f(x)=3x+2 is?",options:["(x-2)/3","3x-2","(x+2)/3","3x+2"],answer:"(x-2)/3"});
+                qs.push({id:qs.length+1,question:"If f(x)=2x and g(x)=x+1, (f∘g)(x) is?",options:["2x+1","2(x+1)","2x","x+1"],answer:"2(x+1)"});
+                qs.push({id:qs.length+1,question:"A bijective function is:",options:["Only injective","Only surjective","Both injective and surjective","Neither"],answer:"Both injective and surjective"});
+                qs.push({id:qs.length+1,question:"Which is a function from {1,2}→{a,b}?",options:["{(1,a),(1,b)}","{(1,a),(2,a)}","{(1,a),(2,a),(2,b)}","{(1,a),(2,b),(1,b)}"],answer:"{(1,a),(2,a)}"});
+                qs.push({id:qs.length+1,question:"Power set size of {1,2} is?",options:["2","3","4","8"],answer:"4"});
+                qs.push({id:qs.length+1,question:"Is ∅ a subset of any set?",options:["Yes","No"],answer:"Yes"});
+
+                let i = 0;
+                while (qs.length < n) {
+                    i++;
+                    const type = i % 6;
+                    if (type === 0) {
+                        const r = (i % 7) + 1;
+                        qs.push({id:qs.length+1,question:`What is the cardinality of ${fmtSet(Array.from({length:r},(_,t)=>t+1))}?`,options:[(r-1).toString(),r.toString(),(r+1).toString(),(r*2).toString()],answer:r.toString()});
+                    } else if (type === 1) {
+                        const A = [1,2,3,4].slice(0, (i%4)+1);
+                        qs.push({id:qs.length+1,question:`Is ${fmtSet(A)} a subset of {1,2,3,4}?`,options:["Yes","No"],answer:"Yes"});
+                    } else if (type === 2) {
+                        const reflexive = (i%2===0);
+                        qs.push({id:qs.length+1,question:`Consider R on {1,2} with pairs ${reflexive ? "(1,1),(2,2)" : "(1,2)"}. Is R reflexive?`,options:["Yes","No"],answer: reflexive ? "Yes":"No"});
+                    } else if (type === 3) {
+                        const inj = (i%3!==0);
+                        qs.push({id:qs.length+1,question:`Is mapping f with f(1)=${i},f(2)=${inj?i+1:i} injective?`,options:["Yes","No"],answer:inj?"Yes":"No"});
+                    } else if (type === 4) {
+                        const a = (i%5)+1;
+                        qs.push({id:qs.length+1,question:`Inverse of f(x)=${a}x+1 ?`,options:[`(x-1)/${a}`,`${a}x-1`,`(x+1)/${a}`,`${a}x+1`],answer:`(x-1)/${a}`});
+                    } else {
+                        qs.push({id:qs.length+1,question:"Domain of √x (real-valued)?",options:["All reals","Non-negative reals","Positive reals","Integers"],answer:"Non-negative reals"});
+                    }
+                }
+                return qs.slice(0,n);
+            }
+
+            function shuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+            const questions = generateQuestions(300);
+            shuffle(questions);
+            let idx = 0;
+            const userAnswers = new Array(questions.length).fill(null);
+            const answered = new Array(questions.length).fill(false);
+
+            const qtext = document.getElementById('qtext');
+            const optionsEl = document.getElementById('options');
+            const prevBtn = document.getElementById('prev');
+            const nextBtn = document.getElementById('next');
+            const submitBtn = document.getElementById('submit-answer');
+            const finishBtn = document.getElementById('finish');
+            const feedback = document.getElementById('feedback');
+            const results = document.getElementById('results');
+
+            function render(i) {
+                const q = questions[i];
+                qtext.textContent = `Q${i+1}: ${q.question}`;
+                optionsEl.innerHTML = '';
+                q.options.forEach((opt, j) => {
+                    const id = `q${i}-o${j}`;
+                    const label = document.createElement('label');
+                    label.className = 'option';
+                    label.htmlFor = id;
+
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = 'option';
+                    input.id = id;
+                    input.value = opt;
+
+                    if (userAnswers[i] === opt) input.checked = true;
+                    if (answered[i]) input.disabled = true;
+
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(' ' + opt));
+                    optionsEl.appendChild(label);
+                });
+
+                prevBtn.disabled = i === 0;
+                nextBtn.disabled = i === questions.length - 1;
+                updateSubmitState();
+                feedback.textContent = '';
+            }
+
+            function updateSubmitState() {
+                submitBtn.disabled = !document.querySelector('input[name="option"]:checked');
+            }
+
+            optionsEl.addEventListener('change', updateSubmitState);
+
+            submitBtn.addEventListener('click', function() {
+                const selected = document.querySelector('input[name="option"]:checked');
+                if (!selected) return;
+                const ans = selected.value;
+                userAnswers[idx] = ans;
+                answered[idx] = true;
+                const correct = ans === questions[idx].answer;
+                feedback.textContent = correct ? 'Correct!' : 'Incorrect!';
+                feedback.style.color = correct ? '#28a745' : '#dc3545';
+                submitBtn.disabled = true;
+            });
+
+            nextBtn.addEventListener('click', function() {
+                if (idx < questions.length - 1) {
+                    idx++;
+                    render(idx);
+                }
+            });
+
+            prevBtn.addEventListener('click', function() {
+                if (idx > 0) {
+                    idx--;
+                    render(idx);
+                }
+            });
+
+            finishBtn.addEventListener('click', function() {
+                const correctCount = userAnswers.filter((ans, i) => ans === questions[i].answer).length;
+                results.innerHTML = `
+                    <h3>Quiz Results</h3>
+                    <p>You answered ${correctCount} out of ${questions.length} questions correctly.</p>
+                    <p>Score: ${Math.round((correctCount / questions.length) * 100)}%</p>
+                    <details>
+                        <summary>Review Answers</summary>
+                        <ol>
+                            ${questions.map((q, i) => `
+                                <li>
+                                    <strong>${q.question}</strong><br>
+                                    Your answer: ${userAnswers[i] || 'Not answered'}<br>
+                                    Correct answer: ${q.answer}<br>
+                                    ${userAnswers[i] === q.answer ? '<span style="color:#28a745">✓ Correct</span>' : '<span style="color:#dc3545">✗ Incorrect</span>'}
+                                </li>
+                            `).join('')}
+                        </ol>
+                    </details>
+                `;
+                results.hidden = false;
+            });
+
+            render(0);
+        })();
+    </script>
+</body>
+</html>
